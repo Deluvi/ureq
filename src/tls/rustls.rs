@@ -167,6 +167,11 @@ fn build_config(tls_config: &TlsConfig) -> Result<CachedRustlConfig, Error> {
         builder
             .dangerous()
             .with_custom_certificate_verifier(Arc::new(DisabledVerifier))
+    } else if let Some(verifier) = tls_config.rustls_cert_verifier.clone() {
+        debug!("Using custom certificate verifier");
+        builder
+            .dangerous()
+            .with_custom_certificate_verifier(verifier)
     } else {
         match &tls_config.root_certs {
             RootCerts::Specific(certs) => {
