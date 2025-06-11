@@ -74,6 +74,8 @@ pub struct TlsConfig {
     disable_verification: bool,
     #[cfg(feature = "_rustls")]
     rustls_crypto_provider: Option<Arc<::rustls::crypto::CryptoProvider>>,
+    #[cfg(feature = "_rustls")]
+    rustls_cert_verifier: Option<Arc<dyn ::rustls::client::danger::ServerCertVerifier>>,
 }
 
 impl TlsConfig {
@@ -260,6 +262,13 @@ impl TlsConfigBuilder {
         self
     }
 
+    /// Yolo documentation for the `rustls` cert verifier.
+    #[cfg(feature = "_rustls")]
+    pub fn unversioned_rustls_cert_verifier(mut self, v: Arc<dyn ::rustls::client::danger::ServerCertVerifier>) -> Self {
+        self.config.rustls_cert_verifier = Some(v);
+        self
+    }
+
     /// Finalize the config
     pub fn build(self) -> TlsConfig {
         self.config
@@ -334,6 +343,8 @@ impl Default for TlsConfig {
             disable_verification: false,
             #[cfg(feature = "_rustls")]
             rustls_crypto_provider: None,
+            #[cfg(feature = "_rustls")]
+            rustls_cert_verifier: None,
         }
     }
 }
